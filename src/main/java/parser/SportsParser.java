@@ -3,40 +3,55 @@ package parser;
 import model.Event;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import parser.impl.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SportsParser {
+
+    private static final Map<String, String> URLS = Map.of(
+            "Football", "https://www.live-result.com/football/",
+            "Hockey", "https://www.live-result.com/hockey/",
+            "Tennis", "https://www.live-result.com/tennis",
+            "Basketball", "https://www.live-result.com/basketball"
+    );
+
+    private static final Map<String, SportParser> parsers = Map.of(
+            "Football", new DefaultSportParser("Football"),
+            "Hockey", new DefaultSportParser("Hockey"),
+            "Tennis", new TennisParser(),
+            "Basketball", new BasketballParser()
+    );
+
     public List<Event> parse() {
-        List<Event> events = new ArrayList<>();
+        List<Event> allEvents = new ArrayList<>();
 
-        try {
-            Document doc = Jsoup.connect("https://www.live-result.com/hockey/")
-                    .userAgent("Mozilla/5.0").get();
+        for (String sport : URLS.keySet()) {
+            try {
+                Document doc = Jsoup.connect(URLS.get(sport))
+                        .userAgent("Mozilla/5.0")
+                        .get();
 
-            Elements matches = doc.select(".live-match-data");
+                Elements matches = doc.select(".live-match-data");
 
-            for (Element match : matches) {
-                String team1 = match.select(".team1").text();
-                String team2 = match.select(".team2").text();
-                String time = match.select(".time").text();
-                String score = match.select(".score").text();
+                SportParser parser = parsers.get(sport);
 
-                if (!team1.isEmpty() && !team2.isEmpty()) {
-                    String title = team1 + " vs " + team2;
-                    if (!score.isEmpty()) {
-                        title += " (" + score + ")";
+                List<Event> events = matches.stream()
+                        .map(parser::parse)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
-                    }
-                    events.add(new Event(team1, team2, time, score));
-                }
+                allEvents.addAll(events);
+
+            } catch (Exception e) {
+                System.out.println("Ошибка парсинга " + sport + ": " + e.getMessage());
             }
-        }catch (Exception e) {
-            System.out.println("Ошибка: " + e.getMessage());
         }
-        return events;
+
+        return allEvents;
     }
+
+
 }
