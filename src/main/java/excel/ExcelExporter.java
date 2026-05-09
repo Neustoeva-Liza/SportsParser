@@ -37,8 +37,8 @@ public class ExcelExporter {
                     Row row = sheet.createRow(rowNum++);
 
                     CellStyle style = switch (e.getStatus()) {
-                        case "LIVE" -> liveStyle;
-                        case "FINISHED" -> finishedStyle;
+                        case "В процессе" -> liveStyle;
+                        case "Закончен" -> finishedStyle;
                         default -> upcomingStyle;
                     };
 

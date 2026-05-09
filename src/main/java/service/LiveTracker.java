@@ -18,8 +18,11 @@ public class LiveTracker {
         List<String> logs = new ArrayList<>();
 
         for (Event e : events) {
+            if (!RussianFilter.isRussian(e)) {
+                continue;
+            }
 
-            if (!"LIVE".equals(e.getStatus())) continue;
+            if (!"В процессе".equals(e.getStatus())) continue;
 
             String key = generateKey(e);
             String newScore = e.getScore();

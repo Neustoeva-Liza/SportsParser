@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 public class SportsParser {
 
     private static final Map<String, String> URLS = Map.of(
-            "Football", "https://www.live-result.com/football/",
-            "Hockey", "https://www.live-result.com/hockey/",
-            "Tennis", "https://www.live-result.com/tennis",
-            "Basketball", "https://www.live-result.com/basketball"
+            "Football", "https://www.liveresult.ru/",
+            "Hockey", "https://www.liveresult.ru/hockey",
+            "Tennis", "https://www.liveresult.ru/tennis",
+            "Basketball", "https://www.liveresult.ru/basketball"
     );
 
     private static final Map<String, SportParser> parsers = Map.of(

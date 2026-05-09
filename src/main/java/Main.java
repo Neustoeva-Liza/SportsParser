@@ -1,15 +1,20 @@
 import parser.SportsParser;
 import model.Event;
 import excel.ExcelExporter;
+import service.DailyMatchService;
 import service.GmailService;
 import service.LiveTracker;
+import service.VkService;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
+    private static boolean morningSent = false;
+    private static boolean eveningSent = false;
 
     public static void main(String[] args) {
 
@@ -17,6 +22,8 @@ public class Main {
         ExcelExporter exporter = new ExcelExporter();
         LiveTracker tracker = new LiveTracker();
         GmailService emailService = new GmailService();
+        DailyMatchService dailyService = new DailyMatchService();
+        VkService vkService = new VkService();
 
         ScheduledExecutorService scheduler =
                 Executors.newSingleThreadScheduledExecutor();
@@ -28,6 +35,50 @@ public class Main {
 
                 List<Event> events = parser.parse();
                 System.out.println("Найдено событий: " + events.size());
+                LocalTime now = LocalTime.now();
+
+                if (now.getHour() == 8 && now.getMinute() <= 1 && !morningSent) {
+
+                    String report = dailyService.buildMorningReport(events);
+
+                    if (report != null) {
+
+                        emailService.sendEmail(
+                                "neuztroeva.liza@gmail.com",
+                                "Матчи российских команд на сегодня",
+                                report
+                        );
+                        vkService.sendMessage(report);
+
+                        morningSent = true;
+
+                        System.out.println("Утренний отчет отправлен");
+                    }
+                }
+
+                if (now.getHour() == 23 && now.getMinute() <= 1 && !eveningSent) {
+
+                    String report = dailyService.buildEveningReport(events);
+
+                    if (report != null) {
+
+                        emailService.sendEmail(
+                                "neuztroeva.liza@gmail.com",
+                                "Результаты матчей российских команд",
+                                report
+                        );
+                        vkService.sendMessage(report);
+
+                        eveningSent = true;
+
+                        System.out.println("Вечерний отчет отправлен");
+                    }
+                }
+
+                if (now.getHour() == 0 && now.getMinute() == 0) {
+                    morningSent = false;
+                    eveningSent = false;
+                }
 
                 List<String> logs = tracker.detectChanges(events);
                 System.out.println("Изменений: " + logs.size());
@@ -43,6 +94,7 @@ public class Main {
                             "Обновления спортивных событий",
                             body
                     );
+                    vkService.sendMessage(body);
 
                     System.out.println("Email отправлен (есть изменения)");
                 } else {

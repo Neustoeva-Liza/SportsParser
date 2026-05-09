@@ -6,7 +6,7 @@ public class StatusResolver {
 
     public static String resolve(Element match) {
         Element statusEl = match.selectFirst(".status");
-        if (statusEl == null) return "UPCOMING";
+        if (statusEl == null) return "Запланирован";
 
         String classAttr = statusEl.attr("class").toLowerCase();
         if (classAttr.contains("minute")
@@ -17,12 +17,12 @@ public class StatusResolver {
                 || classAttr.contains("q2")
                 || classAttr.contains("q3")
                 || classAttr.contains("q4")) {
-            return "LIVE";
+            return "В процессе";
         }
         if (classAttr.contains("ns")) {
-            return "UPCOMING";
+            return "Запланирован";
         }
-        return "FINISHED";
+        return "Закончен";
 
     }
 }
