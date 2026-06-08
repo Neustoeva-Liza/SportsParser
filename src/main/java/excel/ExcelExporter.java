@@ -72,8 +72,8 @@ public class ExcelExporter {
         Sheet sheet = workbook.createSheet("Logs");
 
         Row header = sheet.createRow(0);
-        header.createCell(0).setCellValue("Time");
-        header.createCell(1).setCellValue("Message");
+        header.createCell(0).setCellValue("Время");
+        header.createCell(1).setCellValue("Сообщение");
 
         int rowNum = 1;
 
@@ -100,10 +100,10 @@ public class ExcelExporter {
     private void createHeader(Sheet sheet) {
         Row header = sheet.createRow(0);
 
-        header.createCell(0).setCellValue("Team 1");
-        header.createCell(1).setCellValue("Team 2");
-        header.createCell(2).setCellValue("Time");
-        header.createCell(3).setCellValue("Score");
-        header.createCell(4).setCellValue("Status");
+        header.createCell(0).setCellValue("Команда 1");
+        header.createCell(1).setCellValue("Команда 2");
+        header.createCell(2).setCellValue("Время");
+        header.createCell(3).setCellValue("Счет");
+        header.createCell(4).setCellValue("Статус");
     }
 }

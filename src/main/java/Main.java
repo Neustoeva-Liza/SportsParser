@@ -96,9 +96,9 @@ public class Main {
                     );
                     vkService.sendMessage(body);
 
-                    System.out.println("Email отправлен (есть изменения)");
+                    System.out.println("Email отправлен (есть изменения в Российских матчах)");
                 } else {
-                    System.out.println("Email не отправлен (изменений нет)");
+                    System.out.println("Email и ВК не отправлен");
                 }
 
             } catch (Exception e) {

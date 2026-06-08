@@ -52,6 +52,4 @@ public class SportsParser {
 
         return allEvents;
     }
-
-
 }
